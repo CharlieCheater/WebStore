@@ -33,21 +33,20 @@ namespace WebStore.Controllers
 		{
 			return View();
 		}
-		public async Task<IActionResult> GetOrders()
+		[HttpPost]
+		public async Task<IActionResult> GetPacients([FromBody] string fullSearch)
 		{
-			var orders = _context.Orders.Select(x => new
+			var orders = _context.Pacients.Select(x => new
 			{
 				x.Id,
-				ClientName = x.Client.Name,
-				Products = x.Products.Select(p => new
-				{
-					p.Product.Name,
-					p.Amount,
-					p.Price,
-					Sum = Math.Round(p.Price * p.Amount, 2)
-				}),
-				Count = x.Products.Count()
-			}).ToList();
+				x.FirstName,
+				x.SurName,
+				x.Patronymic,
+				Birthday = x.Birthday.ToShortDateString(),
+				x.PhoneNumber
+			}).Where(x => x.FirstName.Contains(fullSearch, StringComparison.InvariantCultureIgnoreCase)
+			|| x.Patronymic.Contains(fullSearch, StringComparison.InvariantCultureIgnoreCase)
+			|| x.SurName.Contains(fullSearch, StringComparison.InvariantCultureIgnoreCase)).ToList();
 			return Json(orders);
 		}
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

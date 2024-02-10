@@ -3,8 +3,95 @@
 }
 
 <div class="" id="vueapp">
-	<h1 class="display-4">Welcome</h1>
-	<template v-for="item in orders" v-key="item.id">
+	<div class="row w-100">
+		<div class="card w-100">
+			<div class="card-header">
+				<h3 class="card-title">Заполнение мед карты</h3>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col">
+						<label>Фамилия *</label>
+						<input class="form-control" />
+					</div>
+					<div class="col">
+						<label>Имя *</label>
+						<input class="form-control" />
+					</div>
+					<div class="col">
+						<label>Отчество</label>
+						<input class="form-control" />
+					</div>
+					<div class="col">
+						<label>Дата рождения *</label>
+						<input class="form-control" type="date" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col col-9">
+						<label>Адрес *</label>
+						<input class="form-control" />
+					</div>
+					<div class="col">
+						<label>Номер тел.</label>
+						<input class="form-control" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col col-9">
+						<label>Анамез</label>
+						<textarea rows="4" class="form-control">
+
+						</textarea>
+					</div>
+					<div class="col">
+						<label>Место работы</label>
+						<input class="form-control" />
+						<label>Должность</label>
+						<input class="form-control" />
+					</div>
+				</div>
+			</div>
+			<div class="card-footer text-center">
+				<button class="btn btn-success">Заполнить</button>
+			</div>
+		</div>
+	</div>
+	<div class="row w-100">
+		<div class="card w-100">
+			<div class="card-header">
+				<h3 class="card-title">Заполнение мед карты</h3>
+			</div>
+			<div class="card-body">
+				<input v-model="searchInput" class="form-control" placeholder="Поиск пациента" v-on:change="getPacients" />
+				<table class="table table-bordered table-hover">
+					<thead>
+						<tr>
+							<td>№ п/п</td>
+							<td>Фамилия</td>
+							<td>Имя</td>
+							<td>Отчество</td>
+							<td>Дата рождения</td>
+							<td>Номер тел</td>
+						</tr>
+					</thead>
+					<tbody>
+						<template v-for="(pacient, index) in pacients" :key="pacient.id">
+							<tr>
+								<td>{{index + 1}}</td>
+								<td>{{pacient.firstName}}</td>
+								<td>{{pacient.surName}}</td>
+								<td>{{pacient.patronymic}}</td>
+								<td>{{pacient.birthday}}</td>
+								<td>{{pacient.phone}}</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	@* <template v-for="item in orders" v-key="item.id">
 		<div class="card w-25">
 			<div class="card-header">
 				<h3>{{item.id}}<br />{{item.clientName}}</h3>
@@ -20,7 +107,7 @@
 				<a class="btn btn-success">Выполнен</a>
 			</div>
 		</div>
-	</template>
+	</template> *@
 </div>
 
 @section Scripts {
@@ -29,17 +116,19 @@
 			data() {
 				return {
 					orders: [],
+					pacients: [],
+					searchInput: '',
 				}
 			},
 			async mounted() {
-				await this.getOrders();
+				await this.getPacients();
 			},
 			methods: {
-				getOrders: async function () {
+				getPacients: async function () {
 					let th = this;
-					axios.get('/Home/GetOrders').then((response) => {
-						th.orders = response.data;
-						console.log(th.orders[0]);
+					axios.post('/Home/GetPacients', th.searchInput).then((response) => {
+						th.pacients = response.data;
+						console.log(th.pacients[0]);
 					});
 				}
 			},
